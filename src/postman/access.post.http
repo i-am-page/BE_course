@@ -1,0 +1,11 @@
+@base_url = http://localhost:3307/api/v1/
+
+### signUp
+POST {{base_url}}shop/signup
+Content-Type: application/json
+
+{
+    "name": "test",
+    "email": "test@gmail.com",
+    "password": "123"
+}

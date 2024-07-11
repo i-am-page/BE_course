@@ -4,8 +4,10 @@ const morgan = require('morgan') // use to tracking request
 const helmet = require('helmet') // use to secure app by setting various HTTP headers
 const compression = require('compression') // use to compress response due to heavy traffic payload
 const app = express()
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 
-console.log('Process: ',process.env)
+//console.log('Process: ',process.env)
 //init middlewares
 app.use(morgan('dev'))   //dev
 // morgan('combined') --apache standard -- product
@@ -17,19 +19,12 @@ app.use(compression()) // change can be made upto 100 times
 
 //init db
 require('./dbs/init.mongodb')
- const { countConnect,checkOverload } = require('./helper/check.connect')
+//const { countConnect,checkOverload } = require('./helper/check.connect')
 // countConnect()
 // checkOverload()
 
 //init routes
-app.get('/', (req, res, next) => {
-    // const str = "My name is Loc"
-    return res.status(200).json({
-        message: 'Hello World',
-        // metadata: str.repeat(100000)
-    })
-}
-)
+app.use('/api',require('./routers/index'))
 
 
 //handle errors
