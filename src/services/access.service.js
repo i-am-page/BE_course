@@ -1,8 +1,12 @@
 'use strict'
 const shopModel = require("../models/shop.model")
 const bcrypt = require("bcrypt")
-const crypto = require("crypto")
-
+const crypto = require("node:crypto")
+const { format } = require("path")
+const { getInfoData } = require("../utils")
+const KeyTokenService = require("./keyToken.service")
+const { createTokenPair } = require("../auth/authUtils")
+const webcrypto = require('crypto').webcrypto;
 
 const RoleShop = {
     "SHOP": "SHOP",
@@ -26,14 +30,37 @@ class AccessService {
             //step2: create a new shop
             const hashedPassword = await bcrypt.hash(password, 10)
             const newShop = await shopModel.create({ name, email, password: hashedPassword, roles: [RoleShop.SHOP] })
-            
-            if(newShop){
-                //create private, public key
-                const {privateKey, publicKey} = crypto.generateKeyPairSync('rsa', {
-                    modulusLength: 4096,
+
+            if (newShop) {
+                const privateKey = crypto.randomBytes(64).toString('hex')
+                const publicKey = crypto.randomBytes(64).toString('hex')
+                //console.log({ publicKey, privateKey }) // save collection KeyStore
+
+                const keyStore = await KeyTokenService.createKeyToken({
+                    userId: newShop._id,
+                    publicKey,
+                    privateKey
                 })
-                console.log(`[P]::PrivateKey::`, privateKey)
-                console.log(`[P]::PublicKey::`, publicKey) // save collection KeyStore
+
+                if (!keyStore) {
+                    return {
+                        code: `50002`,
+                        message: `Error creating public key`
+                    }
+                }  
+
+                //create token pair
+
+                const tokens = await createTokenPair({ userId: newShop._id }, publicKey, privateKey)
+                console.log(`Created token Success::`, tokens)
+
+                return {
+                    code: `201`,
+                    metadata: {
+                        shop: getInfoData({fields: ['_id', 'name', 'email', 'roles'], object: newShop}),
+                        tokens
+                    }
+                }
             }
         }
         catch (error) {
