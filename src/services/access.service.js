@@ -6,7 +6,7 @@ const { format } = require("path")
 const { getInfoData } = require("../utils")
 const KeyTokenService = require("./keyToken.service")
 const { createTokenPair } = require("../auth/authUtils")
-const webcrypto = require('crypto').webcrypto;
+const { BadRequestError } = require("../core/error.response")
 
 const RoleShop = {
     "SHOP": "SHOP",
@@ -17,15 +17,11 @@ const RoleShop = {
 
 class AccessService {
     signUp = async ({ name, email, password }) => {
-        try {
-            console.log(`AccessServices`)
+        // try {
             //step1: check if the email is already registered
             const shopHolder = await shopModel.findOne({ email }).lean()
             if (shopHolder) {
-                return {
-                    code: `40001`,
-                    message: `Email already exists`,
-                }
+                throw new BadRequestError(`[ERROR]:: Email already exists`)
             }
             //step2: create a new shop
             const hashedPassword = await bcrypt.hash(password, 10)
@@ -43,10 +39,7 @@ class AccessService {
                 })
 
                 if (!keyStore) {
-                    return {
-                        code: `50002`,
-                        message: `Error creating public key`
-                    }
+                    throw new BadRequestError(`[ERROR]:: KeyStore not created`)
                 }  
 
                 //create token pair
@@ -62,15 +55,15 @@ class AccessService {
                     }
                 }
             }
-        }
-        catch (error) {
-            console.log(`error`, error)
-            return res.status(500).json({
-                code: `50001`,
-                message: error.message,
-                status: 'error'
-            })
-        }
+        // }
+        // catch (error) {
+        //     console.log(`error`, error)
+        //     return res.status(500).json({
+        //         code: `50001`,
+        //         message: error.message,
+        //         status: 'error'
+        //     })
+        // }
     }
 }
 
