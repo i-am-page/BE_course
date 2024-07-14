@@ -25,6 +25,13 @@ require('./dbs/init.mongodb')
 
 //init routes
 app.use('/api',require('./routers/index'))
+app.get('/',(req,res)=>{
+    res.json({
+        status:'success',
+        code:200,
+        message:'Welcome to the API'
+    })
+})    
 
 
 //handle errors -- middleware

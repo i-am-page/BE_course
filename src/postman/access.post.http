@@ -3,10 +3,20 @@
 ### signUp
 POST {{base_url}}shop/signup
 Content-Type: application/json
-x-api-key: 0871d994902e1b547e53226b1cff7e1c90e7f3567f134eed72b03504791aeb9721461314ab189f78dc53364ea8fe51cba496c5a1a766d7b5930e2dcb163c1f89
+x-api-key: ad42ecbb3ee6043c39acdd0bc80e74107c85e52ff54f2c04fad87d4bd7520b163d936b90440e6b58978ae1816229b34f053a7b5a1569afded5cea598a2b35fbc
 
 {
     "name": "test",
-    "email": "test04@gmail.com",
+    "email": "test@gmail.com",
+    "password": "123"
+}
+
+### logIn
+POST {{base_url}}shop/login
+Content-Type: application/json
+x-api-key: ad42ecbb3ee6043c39acdd0bc80e74107c85e52ff54f2c04fad87d4bd7520b163d936b90440e6b58978ae1816229b34f053a7b5a1569afded5cea598a2b35fbc
+
+{
+    "email": "test@gmail.com",
     "password": "123"
 }

@@ -1,0 +1,4 @@
+@base_url = http://localhost:3307/
+
+### signUp
+GET {{base_url}}

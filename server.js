@@ -8,9 +8,17 @@ const server = app.listen(PORT, () => {
 })
 
 process.on('SIGINT', () => {
-    server.close(() => {
+    server.close((err) => {
+        if (err) {
+            console.error('Error during server shutdown', err);
+            process.exit(1); // Exit with error code
+        }
         console.log('Server closed');
-        // notify.send(ping..)
-    })
-})
+        // If server hasn't closed within 5 seconds, force shutdown
+        setTimeout(() => {
+            console.warn('Forcing server shutdown');
+            process.exit();
+        }, 5000);
+    });
+});
 
