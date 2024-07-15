@@ -17,6 +17,13 @@ const RoleShop = {
 }
 
 class AccessService {
+    logOut = async( keyStore ) => {
+        console.log(keyStore)
+        const delKey = await KeyTokenService.removeKeyById(keyStore.userId)
+        console.log({delKey})
+        return delKey
+    }
+
     logIn = async ({ email, password, refreshToken = null }) => {
         //check email in dbs
         //match pwd
@@ -37,12 +44,12 @@ class AccessService {
         const privateKey = crypto.randomBytes(64).toString('hex')
         const publicKey = crypto.randomBytes(64).toString('hex')
 
-        const {_id: userId} = foundShop
+        const { _id: userId } = foundShop
         const tokens = await createTokenPair({ userId, email }, publicKey, privateKey)
 
         await KeyTokenService.createKeyToken({
             refreshToken: tokens.refreshToken,
-            privateKey, publicKey,userId
+            privateKey, publicKey, userId
         })
 
         return {
